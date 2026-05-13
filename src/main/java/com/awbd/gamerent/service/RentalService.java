@@ -6,6 +6,7 @@ import com.awbd.gamerent.repository.GameRepository;
 import com.awbd.gamerent.repository.RentalRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -34,14 +35,21 @@ public class RentalService {
             if (gameOptional.isPresent()) {
                 Game game = gameOptional.get();
 
-                long days = ChronoUnit.DAYS.between(rental.getRentalDate(), rental.getReturnDate());
+                if (game.getStock() != null && game.getStock() > 0) {
+                    game.setStock(game.getStock() - 1);
+                    gameRepository.save(game);
+                    long days = ChronoUnit.DAYS.between(rental.getRentalDate(), rental.getReturnDate());
 
-                if (days <= 0) {
-                    days = 1;
+                    if (days <= 0) {
+                        days = 1;
+                    }
+
+                    double calculatedPrice = days * game.getDailyRentPrice();
+                    rental.setTotalPrice(calculatedPrice);
+                }else {
+                    throw new RuntimeException("Jocul nu mai este în stoc!");
                 }
 
-                double calculatedPrice = days * game.getDailyRentPrice();
-                rental.setTotalPrice(calculatedPrice);
             }
         }
 
@@ -63,5 +71,24 @@ public class RentalService {
 
     public void deleteRental(Long id) {
         rentalRepository.deleteById(id);
+    }
+
+    public Rental processReturn(Long rentalId, LocalDate returnDate) {
+        Rental rental = findRentalById(rentalId);
+        rental.setActualReturnDate(returnDate);
+
+        Game game = rental.getGame();
+        game.setStock(game.getStock() + 1);
+        gameRepository.save(game);
+
+        if (returnDate.isAfter(rental.getReturnDate())) {
+            long lateDays = ChronoUnit.DAYS.between(rental.getReturnDate(), returnDate);
+
+            double penalty = lateDays * (game.getDailyRentPrice() * 2);
+
+            rental.setTotalPrice(rental.getTotalPrice() + penalty);
+        }
+
+        return rentalRepository.save(rental);
     }
 }

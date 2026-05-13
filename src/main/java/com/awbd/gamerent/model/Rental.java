@@ -19,6 +19,7 @@ public class Rental {
 
     private Double totalPrice;
 
+    private LocalDate actualReturnDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -58,4 +59,7 @@ public class Rental {
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
+
+    public LocalDate getActualReturnDate() { return actualReturnDate; }
+    public void setActualReturnDate(LocalDate actualReturnDate) { this.actualReturnDate = actualReturnDate; }
 }

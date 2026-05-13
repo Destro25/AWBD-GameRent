@@ -19,6 +19,8 @@ public class Game {
 
     private Double dailyRentPrice;
 
+    private Integer stock;
+
     @ManyToOne
     @JoinColumn(name = "console_id")
     private Console console;
@@ -37,10 +39,11 @@ public class Game {
     public Game() {
     }
 
-    public Game(String title, String description, Double dailyRentPrice) {
+    public Game(String title, String description, Double dailyRentPrice, Integer stock) {
         this.title = title;
         this.description = description;
         this.dailyRentPrice = dailyRentPrice;
+        this.stock = stock;
     }
 
 
@@ -89,4 +92,7 @@ public class Game {
 
     public List<Category> getCategories() { return categories; }
     public void setCategories(List<Category> categories) { this.categories = categories; }
+
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
 }
