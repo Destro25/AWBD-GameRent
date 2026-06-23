@@ -24,7 +24,9 @@ public class UserController {
 
     @GetMapping("/new")
     public String showAddForm(Model model) {
-        model.addAttribute("user", new User());
+        User user = new User();
+        user.setUserProfile(new com.awbd.gamerent.model.UserProfile());
+        model.addAttribute("user", user);
         return "user-form";
     }
 
@@ -36,7 +38,11 @@ public class UserController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
+        User user = userService.findUserById(id);
+        if (user.getUserProfile() == null) {
+            user.setUserProfile(new com.awbd.gamerent.model.UserProfile());
+        }
+        model.addAttribute("user", user);
         return "user-form";
     }
 

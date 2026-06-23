@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Adaugă Închiriere</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { max-width: 500px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;}
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type="date"], select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;}
+    .btn { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; text-decoration: none;}
+    .btn-cancel { background-color: #f44336; padding: 9px 15px; margin-left: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Adaugă o Închiriere Nouă</h2>
+
+<form th:action="@{/rentals/save}" th:object="${rental}" method="post">
+
+  <div class="form-group">
+    <label>Utilizator (Client):</label>
+    <select th:field="*{user}" required>
+      <option value="">-- Alege Utilizatorul --</option>
+      <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.username}"></option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Joc:</label>
+    <select th:field="*{game}" required>
+      <option value="">-- Alege Jocul --</option>
+      <option th:each="g : ${games}" th:value="${g.id}" th:text="${g.title} + ' (Stoc: ' + ${g.stock} + ')'"></option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Data Închirierii:</label>
+    <input type="date" th:field="*{rentalDate}" required />
+  </div>
+
+  <div class="form-group">
+    <label>Data Returnării (Așteptată):</label>
+    <input type="date" th:field="*{returnDate}" required />
+  </div>
+
+  <button type="submit" class="btn">Salvează Închirierea</button>
+  <a th:href="@{/rentals}" class="btn btn-cancel">Anulează</a>
+</form>
+
+</body>
+</html>

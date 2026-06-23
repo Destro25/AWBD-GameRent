@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Închirieri</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 3px; display: inline-block; margin-bottom: 5px;}
+    .btn-add { background-color: #4CAF50; }
+    .btn-return { background-color: #FF9800; } /* Culoare portocalie pentru butonul de returnare */
+    .btn-delete { background-color: #f44336; }
+    .nav-links { margin-bottom: 20px; background-color: #eee; padding: 10px; border-radius: 5px; }
+    .nav-links a { margin-right: 15px; text-decoration: none; color: #333; font-weight: bold; }
+    .nav-links a:hover { color: #2196F3; }
+  </style>
+</head>
+<body>
+
+<div class="nav-links">
+  <a th:href="@{/games}">Jocuri</a>
+  <a th:href="@{/consoles}">Platforme</a>
+  <a th:href="@{/categories}">Categorii</a>
+  <a th:href="@{/users}">Utilizatori</a>
+  <a th:href="@{/rentals}">Închirieri</a>
+</div>
+
+<h2>Toate Închirierile</h2>
+
+<a th:href="@{/rentals/new}" class="btn btn-add">Adaugă Închiriere Nouă</a>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Utilizator</th>
+    <th>Joc</th>
+    <th>Data Închirierii</th>
+    <th>Data Returnării</th>
+    <th>Preț Total</th>
+    <th>Status</th>
+    <th>Acțiuni</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="rental : ${rentals}">
+    <td th:text="${rental.id}">1</td>
+    <td th:text="${rental.user?.username}">Gamer1</td>
+    <td th:text="${rental.game?.title}">FIFA 25</td>
+    <td th:text="${rental.rentalDate}">2026-06-20</td>
+    <td th:text="${rental.returnDate}">2026-06-25</td>
+    <td th:text="${rental.totalPrice} + ' RON'">50 RON</td>
+
+    <td>
+                    <span th:if="${rental.actualReturnDate != null}" style="color: green; font-weight: bold;">
+                        Returnat (<span th:text="${rental.actualReturnDate}"></span>)
+                    </span>
+      <span th:if="${rental.actualReturnDate == null}" style="color: orange; font-weight: bold;">
+                        În Curs
+                    </span>
+    </td>
+
+    <td>
+      <a th:if="${rental.actualReturnDate == null}" th:href="@{/rentals/return/{id}(id=${rental.id})}" class="btn btn-return">Returnează</a>
+      <a th:href="@{/rentals/delete/{id}(id=${rental.id})}" class="btn btn-delete" onclick="return confirm('Ștergi această închiriere?');">Șterge</a>
+    </td>
+  </tr>
+  <tr th:if="${#lists.isEmpty(rentals)}">
+    <td colspan="8" style="text-align: center;">Nu există închirieri înregistrate.</td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
