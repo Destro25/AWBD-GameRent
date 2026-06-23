@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Jocuri</title>
+    <style>
+        .nav-links { margin-bottom: 20px; background-color: #eee; padding: 10px; border-radius: 5px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: #333; font-weight: bold; }
+        .nav-links a:hover { color: #2196F3; }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 3px; display: inline-block; margin-bottom: 10px;}
+        .btn-add { background-color: #4CAF50; }
+        .btn-edit { background-color: #2196F3; }
+        .btn-delete { background-color: #f44336; }
+    </style>
+</head>
+<body>
+<div class="nav-links">
+    <a th:href="@{/games}">Jocuri</a>
+    <a th:href="@{/consoles}">Platforme (Console)</a>
+    <a th:href="@{/categories}">Categorii</a>
+    <a th:href="@{/users}">Utilizatori</a>
+    <a th:href="@{/rentals}">Închirieri</a>
+</div>
+<h2>Toate Jocurile</h2>
+
+<a th:href="@{/games/new}" class="btn btn-add">Adaugă Joc Nou</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Titlu</th>
+        <th>Platformă</th>
+        <th>Categorii</th>
+        <th>Preț/Zi</th>
+        <th>Stoc</th>
+        <th>Acțiuni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="game : ${gamesList}">
+        <td th:text="${game.id}">1</td>
+        <td th:text="${game.title}">Exemplu Joc</td>
+
+        <td th:text="${game.console?.name}">PS5</td>
+
+        <td>
+                    <span th:each="cat, iterStat : ${game.categories}"
+                          th:text="${cat.name} + ${!iterStat.last ? ', ' : ''}">
+                    </span>
+        </td>
+
+        <td th:text="${game.dailyRentPrice} + ' RON'">15 RON</td>
+        <td th:text="${game.stock}">5</td>
+
+        <td>
+            <a th:href="@{/games/edit/{id}(id=${game.id})}" class="btn btn-edit">Editează</a>
+            <a th:href="@{/games/delete/{id}(id=${game.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur că vrei să ștergi acest joc?');">Șterge</a>
+        </td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(gamesList)}">
+        <td colspan="6" style="text-align: center;">Nu există jocuri înregistrate.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
