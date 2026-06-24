@@ -4,8 +4,10 @@ import com.awbd.gamerent.model.Rental;
 import com.awbd.gamerent.service.GameService;
 import com.awbd.gamerent.service.RentalService;
 import com.awbd.gamerent.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -39,7 +41,12 @@ public class RentalController {
     }
 
     @PostMapping("/save")
-    public String saveRental(@ModelAttribute("rental") Rental rental) {
+    public String saveRental(@Valid @ModelAttribute("rental") Rental rental, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userService.findAllUsers());
+            model.addAttribute("games", gameService.findAllGames());
+            return "rental-form";
+        }
         rentalService.saveRental(rental);
         return "redirect:/rentals";
     }

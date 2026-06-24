@@ -4,8 +4,10 @@ import com.awbd.gamerent.model.Game;
 import com.awbd.gamerent.service.CategoryService;
 import com.awbd.gamerent.service.ConsoleService;
 import com.awbd.gamerent.service.GameService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -38,7 +40,13 @@ public class GameController {
 
 
     @PostMapping("/save")
-    public String saveGame(@ModelAttribute("game") Game game) {
+    public String saveGame(@Valid @ModelAttribute("game") Game game, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("consoles", consoleService.findAllConsoles());
+            model.addAttribute("categories", categoryService.findAllCategories());
+            return "game-form";
+        }
+
         gameService.saveGame(game);
         return "redirect:/games";
     }

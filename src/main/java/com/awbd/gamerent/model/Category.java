@@ -1,6 +1,9 @@
 package com.awbd.gamerent.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 @Entity
@@ -11,6 +14,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Numele categoriei este obligatoriu!")
+    @Size(min = 2, max = 50, message = "Numele categoriei trebuie să aibă între 2 și 50 de caractere!")
     @Column(nullable = false, unique = true)
     private String name;
 

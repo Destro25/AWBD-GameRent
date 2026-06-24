@@ -1,6 +1,9 @@
 package com.awbd.gamerent.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 @Entity
@@ -11,9 +14,12 @@ public class Console {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Numele platformei este obligatoriu!")
+    @Size(min = 2, max = 50, message = "Numele trebuie să aibă între 2 și 50 de caractere!")
     @Column(nullable = false, unique = true)
     private String name;
 
+    @NotBlank(message = "Producătorul nu poate lipsi!")
     private String manufacturer;
 
     @OneToMany(mappedBy = "console", cascade = CascadeType.ALL)

@@ -1,5 +1,6 @@
 package com.awbd.gamerent.service;
 
+import com.awbd.gamerent.exception.ResourceNotFoundException;
 import com.awbd.gamerent.model.Game;
 import com.awbd.gamerent.model.Rental;
 import com.awbd.gamerent.repository.GameRepository;
@@ -61,12 +62,8 @@ public class RentalService {
     }
 
     public Rental findRentalById(Long id) {
-        Optional<Rental> rentalOptional = rentalRepository.findById(id);
-        if (rentalOptional.isPresent()) {
-            return rentalOptional.get();
-        } else {
-            throw new RuntimeException("Rezervarea cu ID-ul " + id + " nu a fost gasita!");
-        }
+        return rentalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Închirierea cu ID-ul " + id + " nu a fost găsită în baza de date!"));
     }
 
     public void deleteRental(Long id) {

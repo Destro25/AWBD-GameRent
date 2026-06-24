@@ -1,6 +1,10 @@
 package com.awbd.gamerent.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import java.util.Set;
@@ -13,20 +17,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username-ul este obligatoriu!")
+    @Size(min = 4, max = 30, message = "Username-ul trebuie să aibă între 4 și 30 de caractere!")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NotBlank(message = "Email-ul este obligatoriu!")
+    @Email(message = "Te rog să introduci o adresă de email validă!")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Parola este obligatorie!")
+    @Size(min = 6, message = "Parola trebuie să aibă minim 6 caractere!")
     @Column(nullable = false)
     private String password;
 
-    private boolean enabled;
-
+    @Valid
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private UserProfile userProfile;
+
+    private boolean enabled;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Rental> rentals;

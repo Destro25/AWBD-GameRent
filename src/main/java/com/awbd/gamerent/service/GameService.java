@@ -1,5 +1,6 @@
 package com.awbd.gamerent.service;
 
+import com.awbd.gamerent.exception.ResourceNotFoundException;
 import com.awbd.gamerent.model.Game;
 import com.awbd.gamerent.repository.GameRepository;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,8 @@ public class GameService {
 
 
     public Game findGameById(Long id) {
-        Optional<Game> gameOptional = gameRepository.findById(id);
-
-
-        if (gameOptional.isPresent()) {
-            return gameOptional.get();
-        } else {
-
-            throw new RuntimeException("Jocul cu ID-ul " + id + " nu a fost gasit!");
-        }
+        return gameRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Jocul cu ID-ul " + id + " nu a fost găsit în baza de date!"));
     }
 
 
