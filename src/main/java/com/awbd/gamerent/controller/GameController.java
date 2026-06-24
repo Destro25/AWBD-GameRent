@@ -5,6 +5,7 @@ import com.awbd.gamerent.service.CategoryService;
 import com.awbd.gamerent.service.ConsoleService;
 import com.awbd.gamerent.service.GameService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +26,27 @@ public class GameController {
     }
 
     @GetMapping
-    public String showGameList(Model model) {
-        model.addAttribute("gamesList", gameService.findAllGames());
+    public String showGames(Model model) {
+        return findPaginated(1, "title", "asc", model);
+    }
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo,
+                                @RequestParam("sortField") String sortField,
+                                @RequestParam("sortDir") String sortDir,
+                                Model model) {
+        int pageSize = 5;
+        Page<Game> page = gameService.findPaginated(pageNo, pageSize, sortField, sortDir);
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("gamesList", page.getContent());
         return "game-list";
     }
 

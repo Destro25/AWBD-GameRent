@@ -15,6 +15,11 @@
         .btn-add { background-color: #4CAF50; }
         .btn-edit { background-color: #2196F3; }
         .btn-delete { background-color: #f44336; }
+        .pagination-container { margin-top: 20px; font-size: 14px; }
+        .page-link { padding: 6px 12px; text-decoration: none; border: 1px solid #ccc; margin-right: 5px; border-radius: 3px; color: #333; background-color: white;}
+        .page-link:hover { background-color: #eee; }
+        .page-active { padding: 6px 12px; font-weight: bold; margin-right: 5px; border: 1px solid #4CAF50; background-color: #4CAF50; color: white; border-radius: 3px; }
+        .page-disabled { padding: 6px 12px; color: #aaa; margin-right: 5px; border: 1px solid #eee; border-radius: 3px; background-color: #f9f9f9;}
     </style>
 </head>
 <body>
@@ -26,12 +31,13 @@
     <a th:href="@{/rentals}">Închirieri</a>
 
     <span sec:authorize="isAuthenticated()" style="float: right;">
-            Salut, <strong sec:authentication="name"></strong>!
-            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
-                <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Logout</button>
-            </form>
-        </span>
+        Salut, <strong sec:authentication="name"></strong>!
+        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+            <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Logout</button>
+        </form>
+    </span>
 </div>
+
 <h2>Toate Jocurile</h2>
 
 <a th:href="@{/games/new}" class="btn btn-add">Adaugă Joc Nou</a>
@@ -40,10 +46,14 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Titlu</th>
+        <th>
+            <a th:href="@{'/games/page/' + ${currentPage} + '?sortField=title&sortDir=' + ${reverseSortDir}}" style="text-decoration: none; color: black; font-weight: bold;">Titlu ↕️</a>
+        </th>
         <th>Platformă</th>
         <th>Categorii</th>
-        <th>Preț/Zi</th>
+        <th>
+            <a th:href="@{'/games/page/' + ${currentPage} + '?sortField=dailyRentPrice&sortDir=' + ${reverseSortDir}}" style="text-decoration: none; color: black; font-weight: bold;">Preț/Zi ↕️</a>
+        </th>
         <th>Stoc</th>
         <th>Acțiuni</th>
     </tr>
@@ -56,9 +66,9 @@
         <td th:text="${game.console?.name}">PS5</td>
 
         <td>
-                    <span th:each="cat, iterStat : ${game.categories}"
-                          th:text="${cat.name} + ${!iterStat.last ? ', ' : ''}">
-                    </span>
+            <span th:each="cat, iterStat : ${game.categories}"
+                  th:text="${cat.name} + ${!iterStat.last ? ', ' : ''}">
+            </span>
         </td>
 
         <td th:text="${game.dailyRentPrice} + ' RON'">15 RON</td>
@@ -71,10 +81,28 @@
     </tr>
 
     <tr th:if="${#lists.isEmpty(gamesList)}">
-        <td colspan="6" style="text-align: center;">Nu există jocuri înregistrate.</td>
+        <td colspan="7" style="text-align: center;">Nu există jocuri înregistrate.</td>
     </tr>
     </tbody>
 </table>
+
+<div th:if="${totalPages > 1}" class="pagination-container">
+    <span style="margin-right: 15px;">Total jocuri: <strong>[[${totalItems}]]</strong></span>
+
+    <a th:if="${currentPage > 1}" th:href="@{'/games/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Prima</a>
+    <span th:unless="${currentPage > 1}" class="page-disabled">Prima</span>
+
+    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+        <a th:if="${currentPage != i}" th:href="@{'/games/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">[[${i}]]</a>
+        <span th:unless="${currentPage != i}" class="page-active">[[${i}]]</span>
+    </span>
+
+    <a th:if="${currentPage < totalPages}" th:href="@{'/games/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Următoarea</a>
+    <span th:unless="${currentPage < totalPages}" class="page-disabled">Următoarea</span>
+
+    <a th:if="${currentPage < totalPages}" th:href="@{'/games/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Ultima</a>
+    <span th:unless="${currentPage < totalPages}" class="page-disabled">Ultima</span>
+</div>
 
 </body>
 </html>

@@ -8,13 +8,20 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     th { background-color: #f2f2f2; }
-    .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 3px; display: inline-block; margin-bottom: 10px;}
+    .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 3px; display: inline-block; margin-bottom: 5px;}
     .btn-add { background-color: #4CAF50; }
     .btn-edit { background-color: #2196F3; }
     .btn-delete { background-color: #f44336; }
+
     .nav-links { margin-bottom: 20px; background-color: #eee; padding: 10px; border-radius: 5px; }
     .nav-links a { margin-right: 15px; text-decoration: none; color: #333; font-weight: bold; }
     .nav-links a:hover { color: #2196F3; }
+
+    .pagination-container { margin-top: 20px; font-size: 14px; }
+    .page-link { padding: 6px 12px; text-decoration: none; border: 1px solid #ccc; margin-right: 5px; border-radius: 3px; color: #333; background-color: white;}
+    .page-link:hover { background-color: #eee; }
+    .page-active { padding: 6px 12px; font-weight: bold; margin-right: 5px; border: 1px solid #4CAF50; background-color: #4CAF50; color: white; border-radius: 3px; }
+    .page-disabled { padding: 6px 12px; color: #aaa; margin-right: 5px; border: 1px solid #eee; border-radius: 3px; background-color: #f9f9f9;}
   </style>
 </head>
 <body>
@@ -25,33 +32,46 @@
   <a th:href="@{/categories}">Categorii</a>
   <a th:href="@{/users}">Utilizatori</a>
   <a th:href="@{/rentals}">Închirieri</a>
+
+  <span sec:authorize="isAuthenticated()" style="float: right;">
+            Salut, <strong sec:authentication="name"></strong>!
+            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+                <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Logout</button>
+            </form>
+        </span>
 </div>
 
 <h2>Toți Utilizatorii</h2>
 
-<a th:href="@{/users/new}" class="btn btn-add">Adaugă Utilizator Nou</a>
+<a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/users/new}" class="btn btn-add">Adaugă Utilizator Nou</a>
 
 <table>
   <thead>
   <tr>
     <th>ID</th>
-    <th>Username</th>
-    <th>Email</th>
+    <th>
+      <a th:href="@{'/users/page/' + ${currentPage} + '?sortField=username&sortDir=' + ${reverseSortDir}}" style="text-decoration: none; color: black; font-weight: bold;">Username ↕️</a>
+    </th>
+    <th>
+      <a th:href="@{'/users/page/' + ${currentPage} + '?sortField=email&sortDir=' + ${reverseSortDir}}" style="text-decoration: none; color: black; font-weight: bold;">Email ↕️</a>
+    </th>
     <th>Nume Complet</th>
     <th>Telefon</th>
     <th>Acțiuni</th>
   </tr>
   </thead>
   <tbody>
-  <tr th:each="user : ${users}">
-    <td th:text="${user.id}">1</td>
-    <td th:text="${user.username}">gamer123</td>
-    <td th:text="${user.email}">test@test.com</td>
-    <td th:text="${user.userProfile?.firstName + ' ' + user.userProfile?.lastName}">Ion Popescu</td>
-    <td th:text="${user.userProfile?.phoneNumber}">0700000000</td>
+  <tr th:each="u : ${users}">
+    <td th:text="${u.id}">1</td>
+    <td th:text="${u.username}">TestUser</td>
+    <td th:text="${u.email}">test@test.com</td>
+
+    <td th:text="${u.userProfile != null ? u.userProfile.firstName + ' ' + u.userProfile.lastName : '-'}">Nume Prenume</td>
+    <td th:text="${u.userProfile != null ? u.userProfile.phoneNumber : '-'}">0700000000</td>
+
     <td>
-      <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-edit">Editează</a>
-      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-delete" onclick="return confirm('Ștergi acest utilizator?');">Șterge</a>
+      <a th:href="@{/users/edit/{id}(id=${u.id})}" class="btn btn-edit">Editează</a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/users/delete/{id}(id=${u.id})}" class="btn btn-delete" onclick="return confirm('Ștergi acest utilizator?');">Șterge</a>
     </td>
   </tr>
   <tr th:if="${#lists.isEmpty(users)}">
@@ -59,6 +79,24 @@
   </tr>
   </tbody>
 </table>
+
+<div th:if="${totalPages > 1}" class="pagination-container">
+  <span style="margin-right: 15px;">Total utilizatori: <strong>[[${totalItems}]]</strong></span>
+
+  <a th:if="${currentPage > 1}" th:href="@{'/users/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Prima</a>
+  <span th:unless="${currentPage > 1}" class="page-disabled">Prima</span>
+
+  <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${currentPage != i}" th:href="@{'/users/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">[[${i}]]</a>
+            <span th:unless="${currentPage != i}" class="page-active">[[${i}]]</span>
+        </span>
+
+  <a th:if="${currentPage < totalPages}" th:href="@{'/users/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Următoarea</a>
+  <span th:unless="${currentPage < totalPages}" class="page-disabled">Următoarea</span>
+
+  <a th:if="${currentPage < totalPages}" th:href="@{'/users/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="page-link">Ultima</a>
+  <span th:unless="${currentPage < totalPages}" class="page-disabled">Ultima</span>
+</div>
 
 </body>
 </html>
