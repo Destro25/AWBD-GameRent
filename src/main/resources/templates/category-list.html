@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Lista Categorii</title>
@@ -43,7 +43,7 @@
     <td th:text="${category.name}">Action</td>
     <td>
       <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-edit">Editează</a>
-      <a th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur că vrei să ștergi această categorie?');">Șterge</a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur că vrei să ștergi această categorie?');">Șterge</a>
     </td>
   </tr>
 

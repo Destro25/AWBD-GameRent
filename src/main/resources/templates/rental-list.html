@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Lista Închirieri</title>
@@ -64,7 +64,7 @@
 
     <td>
       <a th:if="${rental.actualReturnDate == null}" th:href="@{/rentals/return/{id}(id=${rental.id})}" class="btn btn-return">Returnează</a>
-      <a th:href="@{/rentals/delete/{id}(id=${rental.id})}" class="btn btn-delete" onclick="return confirm('Ștergi această închiriere?');">Șterge</a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/rentals/delete/{id}(id=${rental.id})}" class="btn btn-delete" onclick="return confirm('Ștergi această închiriere?');">Șterge</a>
     </td>
   </tr>
   <tr th:if="${#lists.isEmpty(rentals)}">

@@ -39,6 +39,9 @@ public class User {
 
     private boolean enabled;
 
+    @Column(nullable = false)
+    private String role;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Rental> rentals;
 
@@ -73,4 +76,6 @@ public class User {
     public List<Rental> getRentals() { return rentals; }
     public void setRentals(List<Rental> rentals) { this.rentals = rentals; }
 
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }
