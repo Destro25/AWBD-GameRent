@@ -5,7 +5,10 @@ import com.awbd.gamerent.model.User;
 import com.awbd.gamerent.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +41,11 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul cu ID-ul " + id + " nu a fost găsit!"));
     }
 
+    public Page<User> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return userRepository.findAll(pageable);
+    }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);

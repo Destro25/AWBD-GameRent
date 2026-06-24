@@ -3,6 +3,7 @@ package com.awbd.gamerent.controller;
 import com.awbd.gamerent.model.User;
 import com.awbd.gamerent.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,8 +21,27 @@ public class UserController {
     }
 
     @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAllUsers());
+    public String showUsersList(Model model) {
+        return findPaginated(1, "username", "asc", model);
+    }
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo,
+                                @RequestParam("sortField") String sortField,
+                                @RequestParam("sortDir") String sortDir,
+                                Model model) {
+        int pageSize = 5;
+        Page<User> page = userService.findPaginated(pageNo, pageSize, sortField, sortDir);
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("users", page.getContent());
         return "user-list";
     }
 
