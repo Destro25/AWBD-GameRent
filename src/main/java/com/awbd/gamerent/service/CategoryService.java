@@ -1,5 +1,6 @@
 package com.awbd.gamerent.service;
 
+import com.awbd.gamerent.exception.ResourceNotFoundException;
 import com.awbd.gamerent.model.Category;
 import com.awbd.gamerent.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,8 @@ public class CategoryService {
     }
 
     public Category findCategoryById(Long id) {
-        Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if (categoryOptional.isPresent()) {
-            return categoryOptional.get();
-        } else {
-            throw new RuntimeException("Categoria cu ID-ul " + id + " nu a fost gasita!");
-        }
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria cu ID-ul " + id + " nu a fost găsită!"));
     }
 
     public void deleteCategory(Long id) {

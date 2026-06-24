@@ -2,8 +2,10 @@ package com.awbd.gamerent.controller;
 
 import com.awbd.gamerent.model.User;
 import com.awbd.gamerent.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -31,7 +33,10 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user) {
+    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "user-form";
+        }
         userService.saveUser(user);
         return "redirect:/users";
     }

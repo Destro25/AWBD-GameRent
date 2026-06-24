@@ -2,8 +2,10 @@ package com.awbd.gamerent.controller;
 
 import com.awbd.gamerent.model.Console;
 import com.awbd.gamerent.service.ConsoleService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -29,7 +31,12 @@ public class ConsoleController {
     }
 
     @PostMapping("/save")
-    public String saveConsole(@ModelAttribute("console") Console console) {
+    public String saveConsole(@Valid @ModelAttribute("console") Console console, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "console-form";
+        }
+
         consoleService.saveConsole(console);
         return "redirect:/consoles";
     }

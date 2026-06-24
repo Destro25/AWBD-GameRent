@@ -1,5 +1,6 @@
 package com.awbd.gamerent.service;
 
+import com.awbd.gamerent.exception.ResourceNotFoundException;
 import com.awbd.gamerent.model.User;
 import com.awbd.gamerent.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,8 @@ public class UserService {
 
 
     public User findUserById(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        } else {
-            throw new RuntimeException("Utilizatorul cu ID-ul " + id + " nu a fost gasit!");
-        }
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilizatorul cu ID-ul " + id + " nu a fost găsit!"));
     }
 
 

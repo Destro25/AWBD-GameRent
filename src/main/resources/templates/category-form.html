@@ -11,6 +11,7 @@
         input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;}
         .btn { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; text-decoration: none;}
         .btn-cancel { background-color: #f44336; padding: 9px 15px; margin-left: 10px; }
+        .text-danger { color: red; font-size: 0.85em; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
@@ -23,7 +24,8 @@
 
     <div class="form-group">
         <label>Nume Categorie:</label>
-        <input type="text" th:field="*{name}" required placeholder="Ex: RPG, Shooter, Racing" />
+        <input type="text" th:field="*{name}" placeholder="Ex: RPG, Shooter, Racing" />
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn">Salvează Categoria</button>

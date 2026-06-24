@@ -1,5 +1,6 @@
 package com.awbd.gamerent.service;
 
+import com.awbd.gamerent.exception.ResourceNotFoundException;
 import com.awbd.gamerent.model.Console;
 import com.awbd.gamerent.repository.ConsoleRepository;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,8 @@ public class ConsoleService {
     }
 
     public Console findConsoleById(Long id) {
-        Optional<Console> consoleOptional = consoleRepository.findById(id);
-        if (consoleOptional.isPresent()) {
-            return consoleOptional.get();
-        } else {
-            throw new RuntimeException("Consola cu ID-ul " + id + " nu a fost gasita!");
-        }
+        return consoleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Platforma (Consola) cu ID-ul " + id + " nu a fost găsită în baza de date!"));
     }
 
     public void deleteConsole(Long id) {

@@ -2,8 +2,10 @@ package com.awbd.gamerent.controller;
 
 import com.awbd.gamerent.model.Category;
 import com.awbd.gamerent.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -29,7 +31,10 @@ public class CategoryController {
     }
 
     @PostMapping("/save")
-    public String saveCategory(@ModelAttribute("category") Category category) {
+    public String saveCategory(@Valid @ModelAttribute("category") Category category, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "category-form";
+        }
         categoryService.saveCategory(category);
         return "redirect:/categories";
     }

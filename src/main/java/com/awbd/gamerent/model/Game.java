@@ -1,6 +1,10 @@
 package com.awbd.gamerent.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -12,15 +16,23 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Titlul jocului este obligatoriu!")
+    @Size(min = 2, max = 100, message = "Titlul trebuie să aibă între 2 și 100 de caractere!")
     @Column(nullable = false)
     private String title;
 
+    @Size(max = 500, message = "Descrierea nu poate depăși 500 de caractere!")
     private String description;
 
+    @NotNull(message = "Prețul pe zi este obligatoriu!")
+    @Min(value = 1, message = "Prețul trebuie să fie de minim 1 RON!")
     private Double dailyRentPrice;
 
+    @NotNull(message = "Stocul este obligatoriu!")
+    @Min(value = 0, message = "Stocul nu poate fi negativ!")
     private Integer stock;
 
+    @NotNull(message = "Trebuie să selectezi o platformă!")
     @ManyToOne
     @JoinColumn(name = "console_id")
     private Console console;

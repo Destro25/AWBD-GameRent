@@ -1,6 +1,8 @@
 package com.awbd.gamerent.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,9 +13,11 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Data de început este obligatorie!")
     @Column(nullable = false)
     private LocalDate rentalDate;
 
+    @NotNull(message = "Data de returnare estimată este obligatorie!")
     @Column(nullable = false)
     private LocalDate returnDate;
 
@@ -21,11 +25,12 @@ public class Rental {
 
     private LocalDate actualReturnDate;
 
+    @NotNull(message = "Trebuie să selectezi un client!")
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
+    @NotNull(message = "Trebuie să selectezi un joc!")
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
