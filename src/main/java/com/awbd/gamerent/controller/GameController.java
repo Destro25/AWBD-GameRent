@@ -10,10 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/games")
 public class GameController {
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     private final GameService gameService;
     private final ConsoleService consoleService;
@@ -68,6 +71,7 @@ public class GameController {
         }
 
         gameService.saveGame(game);
+        logger.info("Eveniment: Un joc nou a fost adăugat sau editat în baza de date cu titlul: {}", game.getTitle());
         return "redirect:/games";
     }
 
