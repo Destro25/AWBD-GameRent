@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Eroare 500 - Problemă Internă</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; background-color: #f9f9f9; }
+    .error-container { background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; max-width: 600px; }
+    h1 { color: #FF9800; font-size: 50px; margin-bottom: 10px; }
+    h2 { color: #333; }
+    .error-msg { font-weight: bold; color: #555; margin: 20px 0; padding: 15px; background-color: #fff3e0; border-left: 5px solid #FF9800; }
+    .btn { padding: 10px 20px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px; }
+  </style>
+</head>
+<body>
+<div class="error-container">
+  <h1>500</h1>
+  <h2>Hopa! A apărut o problemă.</h2>
+  <p>Se pare că datele introduse intră în conflict cu ceva existent (ex: un email sau username deja folosit) sau a apărut o eroare pe server.</p>
+  <div class="error-msg" th:text="${errorMessage}">Eroare internă a serverului.</div>
+  <a th:href="@{/games}" class="btn">Înapoi la pagina principală</a>
+</div>
+</body>
+</html>

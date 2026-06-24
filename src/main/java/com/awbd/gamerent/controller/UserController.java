@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/users")
@@ -33,10 +34,18 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Authentication authentication) {
         if (bindingResult.hasErrors()) {
             return "user-form";
         }
+
+        boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            user.setRole("ROLE_USER");
+        }
+
         userService.saveUser(user);
         return "redirect:/users";
     }

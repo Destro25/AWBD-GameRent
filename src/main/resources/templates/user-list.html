@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Lista Utilizatori</title>
@@ -51,7 +51,7 @@
     <td th:text="${user.userProfile?.phoneNumber}">0700000000</td>
     <td>
       <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-edit">Editează</a>
-      <a th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-delete" onclick="return confirm('Ștergi acest utilizator?');">Șterge</a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-delete" onclick="return confirm('Ștergi acest utilizator?');">Șterge</a>
     </td>
   </tr>
   <tr th:if="${#lists.isEmpty(users)}">

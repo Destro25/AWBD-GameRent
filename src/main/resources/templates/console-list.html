@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Lista Platforme</title>
@@ -43,7 +43,7 @@
     <td th:text="${console.manufacturer}">Sony</td>
     <td>
       <a th:href="@{/consoles/edit/{id}(id=${console.id})}" class="btn btn-edit">Editează</a>
-      <a th:href="@{/consoles/delete/{id}(id=${console.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur? Jocurile asociate cu această consolă și-ar putea pierde referința!');">Șterge</a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/consoles/delete/{id}(id=${console.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur? Jocurile asociate cu această consolă și-ar putea pierde referința!');">Șterge</a>
     </td>
   </tr>
 

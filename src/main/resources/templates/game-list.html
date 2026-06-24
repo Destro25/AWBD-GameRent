@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Lista Jocuri</title>
@@ -20,10 +20,17 @@
 <body>
 <div class="nav-links">
     <a th:href="@{/games}">Jocuri</a>
-    <a th:href="@{/consoles}">Platforme (Console)</a>
+    <a th:href="@{/consoles}">Platforme</a>
     <a th:href="@{/categories}">Categorii</a>
     <a th:href="@{/users}">Utilizatori</a>
     <a th:href="@{/rentals}">Închirieri</a>
+
+    <span sec:authorize="isAuthenticated()" style="float: right;">
+            Salut, <strong sec:authentication="name"></strong>!
+            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+                <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Logout</button>
+            </form>
+        </span>
 </div>
 <h2>Toate Jocurile</h2>
 
@@ -59,7 +66,7 @@
 
         <td>
             <a th:href="@{/games/edit/{id}(id=${game.id})}" class="btn btn-edit">Editează</a>
-            <a th:href="@{/games/delete/{id}(id=${game.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur că vrei să ștergi acest joc?');">Șterge</a>
+            <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/games/delete/{id}(id=${game.id})}" class="btn btn-delete" onclick="return confirm('Ești sigur că vrei să ștergi acest joc?');">Șterge</a>
         </td>
     </tr>
 
