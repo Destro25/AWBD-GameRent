@@ -10,7 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,5 +60,27 @@ public class GameServiceUnitTest {
         });
 
         assertTrue(exception.getMessage().contains("nu a fost găsit"));
+    }
+
+    @Test
+    void testDeleteGame() {
+        doNothing().when(gameRepository).deleteById(99L);
+
+        gameService.deleteGame(99L);
+
+        verify(gameRepository, times(1)).deleteById(99L);
+    }
+
+    @Test
+    void testFindPaginated() {
+        Page<Game> dummyPage = new PageImpl<>(Arrays.asList(testGame));
+
+        when(gameRepository.findAll(any(Pageable.class))).thenReturn(dummyPage);
+
+        Page<Game> result = gameService.findPaginated(1, 5, "title", "ASC");
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals("Joc Mockito", result.getContent().get(0).getTitle());
     }
 }
